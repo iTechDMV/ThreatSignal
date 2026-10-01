@@ -1,0 +1,24 @@
+name: ransomware
+steps:
+  - id: R1
+    phase: detection
+    automated_actions:
+      - action: intel.lookup
+        target: indicators
+    approval: soc_manager
+
+  - id: R2
+    phase: containment
+    automated_actions:
+      - action: edr.isolate_endpoint
+        target: affected_assets
+    dependencies: [R1]
+
+  - id: R3
+    phase: blocking
+    automated_actions:
+      - action: firewall.block_ip
+        target: indicators
+        params:
+          duration: 86400
+    dependencies: [R2]
